@@ -1,0 +1,3 @@
+[submodule "era5land-utilities"]
+	path = era5land-utilities
+	url = https://github.com/HereIsZephyrus/era5land-utilities
