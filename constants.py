@@ -21,4 +21,7 @@ variables = [
     "type_of_high_vegetation",
     "type_of_low_vegetation"
 ]
-hour_list = ["10:00","11:00","12:00","13:00"]
+hour_list = range(10,14)
+time_zone = 8 # Beijing Time UTC+8
+def make_hour_list():
+    return [f"{hour-time_zone:02d}:00" for hour in hour_list]

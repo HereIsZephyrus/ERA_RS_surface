@@ -2,6 +2,7 @@ from ERA5land_downloader import request_constructor, download, make_time, normal
 from functools import partial
 import constants
 import pandas as pd
+import time
 from dotenv import load_dotenv
 import os
 import logging
@@ -14,7 +15,7 @@ load_dotenv()
 
 era5land_downloader = partial(download, dataset_name = constants.dataset_name)
 rs_request = partial(request_constructor, request_variables = constants.variables, data_format = "grib", download_format = "unarchived")
-hour = constants.hour_list
+hour = constants.make_hour_list()
 
 rs_record = pd.read_json(os.getenv("RS_RECORD_PATH"))
 target_dir = os.getenv("TARGET_DIR")
@@ -33,9 +34,19 @@ def download_city(row):
     time = make_time(year, month, day, hour)
     normal_geometry = normalize_geometry(geometry)
     era5land_request = rs_request(time = time, area = normal_geometry)
-    era5land_downloader(selection_request = era5land_request, target_file = target_path)
-    logger.info(f"Downloaded {file_name}")
+    try:
+        era5land_downloader(selection_request = era5land_request, target_file = target_path)
+        logger.info(f"Downloaded {file_name}")
+    except Exception as e:
+        if "400 Client Error" in str(e):
+            logger.info("request this resource later")
+            time.sleep(10)
+            download_city(row)
+        else:
+            raise e
 
 os.makedirs(target_dir, exist_ok=True)
-with ThreadPoolExecutor(max_workers=10) as executor:
+with ThreadPoolExecutor(max_workers=9) as executor:
     executor.map(download_city, rs_record.to_dict(orient="records"))
+#for row in rs_record.to_dict(orient="records"):
+#    download_city(row)

@@ -41,7 +41,7 @@ def request_constructor(request_variables, data_format, download_format, time, a
         "download_format": download_format,
         "area": area
     }
-    
+    logger.info(f"make request")
     return request
 
 def make_time(year, month, day, hour):
@@ -66,6 +66,7 @@ def normalize_geometry(outbound_geometry):
     max_lon, max_lat = up_right
 
     if min_lat < -90 or max_lat > 90 or min_lon < -180 or max_lon > 180:
+        logger.error(f"Invalid geometry: {outbound_geometry}")
         raise ValueError("Invalid geometry")
 
     return [max_lat, min_lon, min_lat, max_lon]
