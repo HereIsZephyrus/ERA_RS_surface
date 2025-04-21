@@ -30,7 +30,10 @@ def download_city(row):
     geometry = row["geometry"]["coordinates"][0]
 
     file_name = f"{city}_{year:04d}{month:02d}{day:02d}"
-    target_path = os.path.join(target_dir, f"{file_name}.grib")
+    target_path = os.path.join(target_dir, f"{file_name}.zip")
+    if os.path.exists(target_path):
+        logger.info(f"File {file_name} already exists")
+        return
     time = make_time(year, month, day, hour)
     normal_geometry = normalize_geometry(geometry)
     era5land_request = rs_request(time = time, area = normal_geometry)
