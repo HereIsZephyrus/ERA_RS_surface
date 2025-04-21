@@ -1,3 +1,6 @@
+remote_sensing_record.json
+era5land-utilities/
+era5land*/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
