@@ -1,7 +1,8 @@
 import math
 from constants import atmosphere_constants as constants
 import logging
-
+import xarray as xr
+import numpy as np
 logger = logging.getLogger("atmosphere")
 
 def rho(p, Ta):
@@ -42,3 +43,18 @@ def ra(u_star):
     logger.debug(f"Calculating aerodynamic resistance at {u_star} m/s")
     return math.log(z2 / z1) / (constants['von_karman'] * u_star)
 
+def calc_average_wind_speed(nc_path):
+    ds = xr.open_dataset(nc_path)
+    u10_array = abs(ds['u10'].values)
+    v10_array = abs(ds['v10'].values)
+    wind_array = np.sqrt(u10_array**2 + v10_array**2)
+    mean_wind_speed = wind_array.mean()
+    std_wind_speed = wind_array.std()
+    return mean_wind_speed, std_wind_speed
+
+def calc_average_precepitation(nc_path):
+    ds = xr.open_dataset(nc_path)
+    precipitation_array = ds['tp'].values
+    mean_precipitation = precipitation_array.mean()
+    std_precipitation = precipitation_array.std()
+    return mean_precipitation, std_precipitation
