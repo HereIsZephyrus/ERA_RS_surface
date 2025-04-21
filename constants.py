@@ -25,3 +25,11 @@ hour_list = range(10,14)
 time_zone = 8 # Beijing Time UTC+8
 def make_hour_list():
     return [f"{hour-time_zone:02d}:00" for hour in hour_list]
+
+atmosphere_constants = {
+    'Cp': 1004,
+    'von_karman': 0.4,
+    'g': 9.81,
+    'lambda': 0.66,
+    'R': 287
+}
